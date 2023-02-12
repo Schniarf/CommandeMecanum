@@ -9,35 +9,43 @@ function control2 (speed: number) {
             . # # # .
             `)
     }
+    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Number_5)) {
+        basic.showIcon(IconNames.Ghost)
+        command(0, 20, 20)
+    }
     if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Number_1)) {
-        basic.showNumber(1)
+        basic.showArrow(ArrowNames.SouthEast)
+        command(20, -20, 0)
     }
-    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Up)) {
-        basic.showArrow(ArrowNames.North)
-        command(20, 0)
-    }
-    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Down)) {
+    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Number_2)) {
         basic.showArrow(ArrowNames.South)
-        command(-20, 0)
+        command(20, 0, 0)
     }
-    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Hash)) {
-        command(0, 20)
+    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Number_3)) {
+        basic.showArrow(ArrowNames.SouthWest)
+        command(20, 20, 0)
+    }
+    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Number_4)) {
+        basic.showArrow(ArrowNames.East)
+        command(0, -20, 0)
+    }
+    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Number_6)) {
+        command(0, 20, 0)
         basic.showArrow(ArrowNames.West)
     }
-    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Star)) {
-        basic.showArrow(ArrowNames.East)
-        command(0, -20)
+    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Number_7)) {
+        command(-20, -20, 0)
+        basic.showArrow(ArrowNames.NorthEast)
     }
-    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Left)) {
-        basic.showLeds(`
-            # . # # .
-            # # . . #
-            # # # . #
-            . . . . #
-            . # # # .
-            `)
+    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Number_8)) {
+        basic.showArrow(ArrowNames.North)
+        command(-20, 0, 0)
     }
-    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Right)) {
+    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Number_9)) {
+        command(-20, 20, 0)
+        basic.showArrow(ArrowNames.NorthWest)
+    }
+    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Hash)) {
         basic.showLeds(`
             . # # . #
             # . . # #
@@ -45,13 +53,24 @@ function control2 (speed: number) {
             # . . . .
             . # # # .
             `)
+        command(0, 0, 20)
+    }
+    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Star)) {
+        basic.showLeds(`
+            # . # # .
+            # # . . #
+            # # # . #
+            . . . . #
+            . # # # .
+            `)
+        command(0, 0, -20)
     }
 }
-function command (xSpeed: number, ySpeed: number) {
-    upperLeftSpeed = xSpeed + ySpeed
-    lowerLeftSpeed = xSpeed - ySpeed
-    upperRightSpeed = xSpeed - ySpeed
-    lowerRightSpeed = xSpeed + ySpeed
+function command (xSpeed: number, ySpeed: number, rSpeed: number) {
+    upperLeftSpeed = xSpeed + ySpeed + rSpeed
+    lowerLeftSpeed = xSpeed - ySpeed + rSpeed
+    upperRightSpeed = xSpeed - ySpeed - rSpeed
+    lowerRightSpeed = xSpeed + ySpeed - rSpeed
     if (upperLeftSpeed >= 0) {
         mecanumRobotV2.Motor(LR.Upper_left, MD.Forward, upperLeftSpeed)
     } else {
