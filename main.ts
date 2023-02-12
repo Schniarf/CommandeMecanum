@@ -9,9 +9,13 @@ function control2 (speed: number) {
             . # # # .
             `)
     }
-    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Number_5)) {
-        basic.showIcon(IconNames.Ghost)
-        command(0, 20, 20)
+    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Right)) {
+        basic.showIcon(IconNames.Happy)
+        command(20, 0, -30)
+    }
+    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Left)) {
+        basic.showIcon(IconNames.Sad)
+        command(20, 0, 30)
     }
     if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Number_1)) {
         basic.showArrow(ArrowNames.SouthEast)
