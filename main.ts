@@ -67,11 +67,10 @@ function scan () {
     minRangeAngle = 180
     for (let angle of angleList) {
         mecanumRobotV2.setServo(servoZero - angle)
-        basic.pause(200)
-        if (mecanumRobotV2.ultra() < minRange) {
+        basic.pause(100)
+        if (mecanumRobotV2.ultra() <= 40 && mecanumRobotV2.ultra() < minRange) {
             minRange = mecanumRobotV2.ultra()
             minRangeAngle = angle
-            music.playTone(262, music.beat(BeatFraction.Sixteenth))
         }
     }
     return minRangeAngle
@@ -116,9 +115,13 @@ irRemote.connectInfrared(DigitalPin.P0)
 mecanumRobotV2.setServo(servoZero)
 servoZero = 98
 angleList = [
-40,
+20,
+50,
+20,
 0,
--40,
+-20,
+-50,
+-20,
 0
 ]
 basic.forever(function () {
