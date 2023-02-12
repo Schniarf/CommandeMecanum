@@ -1,4 +1,4 @@
-function control2 (speed: number) {
+function remote (speed: number) {
     if (irRemote.returnIrButton() == 0) {
         mecanumRobotV2.state()
         basic.showLeds(`
@@ -9,44 +9,36 @@ function control2 (speed: number) {
             . # # # .
             `)
     }
-    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Right)) {
-        basic.showIcon(IconNames.Happy)
-        command(20, 0, -30)
-    }
-    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Left)) {
-        basic.showIcon(IconNames.Sad)
-        command(20, 0, 30)
-    }
     if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Number_1)) {
         basic.showArrow(ArrowNames.SouthEast)
-        command(20, -20, 0)
+        command(speed, 0 - speed, 0)
     }
     if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Number_2)) {
         basic.showArrow(ArrowNames.South)
-        command(20, 0, 0)
+        command(speed, 0, 0)
     }
     if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Number_3)) {
         basic.showArrow(ArrowNames.SouthWest)
-        command(20, 20, 0)
+        command(speed, speed, 0)
     }
     if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Number_4)) {
         basic.showArrow(ArrowNames.East)
-        command(0, -20, 0)
+        command(0, 0 - speed, 0)
     }
     if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Number_6)) {
-        command(0, 20, 0)
+        command(0, speed, 0)
         basic.showArrow(ArrowNames.West)
     }
     if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Number_7)) {
-        command(-20, -20, 0)
+        command(0 - speed, 0 - speed, 0)
         basic.showArrow(ArrowNames.NorthEast)
     }
     if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Number_8)) {
         basic.showArrow(ArrowNames.North)
-        command(-20, 0, 0)
+        command(0 - speed, 0, 0)
     }
     if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Number_9)) {
-        command(-20, 20, 0)
+        command(0 - speed, speed, 0)
         basic.showArrow(ArrowNames.NorthWest)
     }
     if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Hash)) {
@@ -57,7 +49,7 @@ function control2 (speed: number) {
             # . . . .
             . # # # .
             `)
-        command(0, 0, 20)
+        command(0, 0, speed)
     }
     if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Star)) {
         basic.showLeds(`
@@ -67,8 +59,22 @@ function control2 (speed: number) {
             . . . . #
             . # # # .
             `)
-        command(0, 0, -20)
+        command(0, 0, 0 - speed)
     }
+}
+function scan () {
+    minRange = 100
+    minRangeAngle = 180
+    for (let angle of angleList) {
+        mecanumRobotV2.setServo(servoZero - angle)
+        basic.pause(200)
+        if (mecanumRobotV2.ultra() < minRange) {
+            minRange = mecanumRobotV2.ultra()
+            minRangeAngle = angle
+            music.playTone(262, music.beat(BeatFraction.Sixteenth))
+        }
+    }
+    return minRangeAngle
 }
 function command (xSpeed: number, ySpeed: number, rSpeed: number) {
     upperLeftSpeed = xSpeed + ySpeed + rSpeed
@@ -100,11 +106,22 @@ let lowerRightSpeed = 0
 let upperRightSpeed = 0
 let lowerLeftSpeed = 0
 let upperLeftSpeed = 0
-let servoZero = 98
+let minRangeAngle = 0
+let minRange = 0
+let angleList: number[] = []
+let servoZero = 0
 mecanumRobotV2.state()
 basic.clearScreen()
 irRemote.connectInfrared(DigitalPin.P0)
 mecanumRobotV2.setServo(servoZero)
+servoZero = 98
+angleList = [
+40,
+0,
+-40,
+0
+]
 basic.forever(function () {
-    control2(16)
+    basic.showNumber(scan())
+    basic.pause(1000)
 })
