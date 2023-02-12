@@ -1,43 +1,34 @@
-function run (speed: number) {
-    if (speed >= 0) {
-        basic.showLeds(`
-            . . # . .
-            . # # # .
-            # . # . #
-            . . # . .
-            . # # # .
-            `)
-        mecanumRobotV2.Motor(LR.Upper_left, MD.Forward, speed)
-        mecanumRobotV2.Motor(LR.Lower_left, MD.Forward, speed)
-        mecanumRobotV2.Motor(LR.Upper_right, MD.Forward, speed)
-        mecanumRobotV2.Motor(LR.Lower_right, MD.Forward, speed)
-    } else {
+function control2 (speed: number) {
+    if (irRemote.returnIrButton() == 0) {
+        mecanumRobotV2.state()
         basic.showLeds(`
             . # # # .
-            . . # . .
+            # # . . #
             # . # . #
+            # . . # #
             . # # # .
-            . . # . .
             `)
-        mecanumRobotV2.Motor(LR.Upper_left, MD.Back, Math.abs(speed))
-        mecanumRobotV2.Motor(LR.Lower_left, MD.Back, Math.abs(speed))
-        mecanumRobotV2.Motor(LR.Upper_right, MD.Back, Math.abs(speed))
-        mecanumRobotV2.Motor(LR.Lower_right, MD.Back, Math.abs(speed))
     }
-    basic.clearScreen()
-}
-function stop () {
-    basic.showLeds(`
-        . # # # .
-        # # . . #
-        # . # . #
-        # . . # #
-        . # # # .
-        `)
-    mecanumRobotV2.state()
-}
-function turn (speed: number) {
-    if (speed > 0) {
+    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Number_1)) {
+        basic.showNumber(1)
+    }
+    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Up)) {
+        basic.showArrow(ArrowNames.North)
+        command(20, 0)
+    }
+    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Down)) {
+        basic.showArrow(ArrowNames.South)
+        command(-20, 0)
+    }
+    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Hash)) {
+        command(0, 20)
+        basic.showArrow(ArrowNames.West)
+    }
+    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Star)) {
+        basic.showArrow(ArrowNames.East)
+        command(0, -20)
+    }
+    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Left)) {
         basic.showLeds(`
             # . # # .
             # # . . #
@@ -45,11 +36,8 @@ function turn (speed: number) {
             . . . . #
             . # # # .
             `)
-        mecanumRobotV2.Motor(LR.Upper_left, MD.Back, speed)
-        mecanumRobotV2.Motor(LR.Lower_left, MD.Back, speed)
-        mecanumRobotV2.Motor(LR.Upper_right, MD.Forward, speed)
-        mecanumRobotV2.Motor(LR.Lower_right, MD.Forward, speed)
-    } else {
+    }
+    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Right)) {
         basic.showLeds(`
             . # # . #
             # . . # #
@@ -57,67 +45,41 @@ function turn (speed: number) {
             # . . . .
             . # # # .
             `)
-        mecanumRobotV2.Motor(LR.Upper_left, MD.Forward, Math.abs(speed))
-        mecanumRobotV2.Motor(LR.Lower_left, MD.Forward, Math.abs(speed))
-        mecanumRobotV2.Motor(LR.Upper_right, MD.Back, Math.abs(speed))
-        mecanumRobotV2.Motor(LR.Lower_right, MD.Back, Math.abs(speed))
-    }
-    basic.clearScreen()
-}
-function move (speed: number) {
-    if (irRemote.returnIrButton() == 0) {
-        stop()
-    }
-    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Up)) {
-        run(speed)
-    }
-    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Down)) {
-        run(speed * -1)
-    }
-    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Left)) {
-        turn(speed)
-    }
-    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Right)) {
-        turn(speed * -1)
-    }
-    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Number_6)) {
-        straf(speed)
-    }
-    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Number_4)) {
-        straf(speed * -1)
     }
 }
-function straf (speed: number) {
-    if (speed >= 0) {
-        basic.showLeds(`
-            . . # . .
-            . # . . #
-            # # # # #
-            . # . . #
-            . . # . .
-            `)
-        mecanumRobotV2.Motor(LR.Upper_left, MD.Forward, speed)
-        mecanumRobotV2.Motor(LR.Lower_left, MD.Back, speed)
-        mecanumRobotV2.Motor(LR.Upper_right, MD.Back, speed)
-        mecanumRobotV2.Motor(LR.Lower_right, MD.Forward, speed)
+function command (xSpeed: number, ySpeed: number) {
+    upperLeftSpeed = xSpeed + ySpeed
+    lowerLeftSpeed = xSpeed - ySpeed
+    upperRightSpeed = xSpeed - ySpeed
+    lowerRightSpeed = xSpeed + ySpeed
+    if (upperLeftSpeed >= 0) {
+        mecanumRobotV2.Motor(LR.Upper_left, MD.Forward, upperLeftSpeed)
     } else {
-        basic.showLeds(`
-            . . # . .
-            # . . # .
-            # # # # #
-            # . . # .
-            . . # . .
-            `)
-        mecanumRobotV2.Motor(LR.Upper_left, MD.Back, Math.abs(speed))
-        mecanumRobotV2.Motor(LR.Lower_left, MD.Forward, Math.abs(speed))
-        mecanumRobotV2.Motor(LR.Upper_right, MD.Forward, Math.abs(speed))
-        mecanumRobotV2.Motor(LR.Lower_right, MD.Back, Math.abs(speed))
+        mecanumRobotV2.Motor(LR.Upper_left, MD.Back, Math.abs(upperLeftSpeed))
+    }
+    if (lowerLeftSpeed >= 0) {
+        mecanumRobotV2.Motor(LR.Lower_left, MD.Forward, lowerLeftSpeed)
+    } else {
+        mecanumRobotV2.Motor(LR.Lower_left, MD.Back, Math.abs(lowerLeftSpeed))
+    }
+    if (upperRightSpeed >= 0) {
+        mecanumRobotV2.Motor(LR.Upper_right, MD.Forward, upperRightSpeed)
+    } else {
+        mecanumRobotV2.Motor(LR.Upper_right, MD.Back, Math.abs(upperRightSpeed))
+    }
+    if (lowerRightSpeed >= 0) {
+        mecanumRobotV2.Motor(LR.Lower_right, MD.Forward, lowerRightSpeed)
+    } else {
+        mecanumRobotV2.Motor(LR.Lower_right, MD.Back, Math.abs(lowerRightSpeed))
     }
 }
+let lowerRightSpeed = 0
+let upperRightSpeed = 0
+let lowerLeftSpeed = 0
+let upperLeftSpeed = 0
 mecanumRobotV2.state()
 basic.clearScreen()
 irRemote.connectInfrared(DigitalPin.P0)
-music.playMelody("G A B C5 G C5 C5 - ", 120)
 basic.forever(function () {
-    move(16)
+    control2(16)
 })
