@@ -100,9 +100,11 @@ let lowerRightSpeed = 0
 let upperRightSpeed = 0
 let lowerLeftSpeed = 0
 let upperLeftSpeed = 0
+let servoZero = 98
 mecanumRobotV2.state()
 basic.clearScreen()
 irRemote.connectInfrared(DigitalPin.P0)
+mecanumRobotV2.setServo(servoZero)
 basic.forever(function () {
     control2(16)
 })
