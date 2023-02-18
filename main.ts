@@ -1,3 +1,23 @@
+function findLine (cycle: number, speed: number) {
+    finded = 0
+    if (mecanumRobotV2.LineTracking(LT.Right) == 1 || mecanumRobotV2.LineTracking(LT.Center) == 1 || mecanumRobotV2.LineTracking(LT.Left) == 1) {
+        finded = 1
+    } else {
+        command(0, speed * 10, speed * 10)
+        control.waitMicros(10000)
+        command(0, speed, speed)
+        for (let index = 0; index < cycle; index++) {
+            if (mecanumRobotV2.LineTracking(LT.Right) == 1 || mecanumRobotV2.LineTracking(LT.Center) == 1 || mecanumRobotV2.LineTracking(LT.Left) == 1) {
+                finded = 1
+                break;
+            } else {
+                control.waitMicros(100)
+            }
+        }
+    }
+    command(0, 0, 0)
+    return finded
+}
 function remote (speed: number) {
     if (irRemote.returnIrButton() == 0) {
         mecanumRobotV2.state()
@@ -8,6 +28,9 @@ function remote (speed: number) {
             # . . # #
             . # # # .
             `)
+    }
+    if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Ok)) {
+        basic.showIcon(IconNames.Giraffe)
     }
     if (irRemote.returnIrButton() == irRemote.irButton(IrButton.Number_1)) {
         basic.showArrow(ArrowNames.SouthEast)
@@ -107,10 +130,11 @@ let lowerLeftSpeed = 0
 let upperLeftSpeed = 0
 let minRangeAngle = 0
 let minRange = 0
+let finded = 0
 let angleList: number[] = []
 let servoZero = 0
 mecanumRobotV2.state()
-basic.clearScreen()
+led.enable(false)
 irRemote.connectInfrared(DigitalPin.P0)
 mecanumRobotV2.setServo(servoZero)
 servoZero = 98
@@ -125,6 +149,8 @@ angleList = [
 0
 ]
 basic.forever(function () {
-    basic.showNumber(scan())
-    basic.pause(1000)
+    if (findLine(6000, 5) == 1) {
+    	
+    }
+    basic.pause(2000)
 })
